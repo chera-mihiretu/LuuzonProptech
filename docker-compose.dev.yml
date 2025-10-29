@@ -1,0 +1,44 @@
+services:
+  # 1. Your Next.js Application (in Development)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000" # Map host port 3000 to container port 3000
+    env_file:
+      - .env # Load all variables from the .env file
+    
+    # --- This is the key for hot-reloading ---
+    volumes:
+      # Mounts your local code into the container at /app
+      # Any change you make locally is reflected inside the container
+      - .:/app 
+      
+      # Anonymous volumes to "hide" the container's
+      # node_modules and .next folders from the local mount.
+      # This prevents your local node_modules (if any)
+      # from overwriting the ones we installed in the Dockerfile.
+      - /app/node_modules
+      - /app/.next
+    # -------------------------------------------
+
+    depends_on:
+      - mongo # Wait for the mongo service to start first
+    restart: unless-stopped
+
+  # 2. Your MongoDB Database (No Change)
+  mongo:
+    image: mongo:latest
+    env_file:
+      - .env
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      # You might want this exposed for dev tools like MongoDB Compass
+      - "27017:27017" 
+    restart: unless-stopped
+
+# Define the named volume for data persistence
+volumes:
+  mongodb_data:
