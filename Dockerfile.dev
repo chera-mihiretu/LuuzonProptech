@@ -9,10 +9,17 @@ RUN corepack enable
 RUN corepack prepare pnpm@latest --activate
 
 # Copy pnpm lockfile and package.json
+
 COPY package.json pnpm-lock.yaml ./
 
+# 🚨 ADD THIS LINE 🚨
+ENV CI=true
+
+# Copy the rest of your application code
+COPY . .
+
+RUN pnpm install  RUN pnpm install --frozen-lockfile
 # Install dependencies using pnpm
-RUN pnpm install 
 
 # Expose the default Next.js dev port
 EXPOSE 3000

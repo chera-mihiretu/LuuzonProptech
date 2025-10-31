@@ -1,0 +1,56 @@
+# -----------------------------------------------------------------
+# STAGE 1: BUILDER
+# Purpose: Install all dependencies (including dev) and run the Next.js build command.
+# -----------------------------------------------------------------
+    FROM node:20-alpine AS builder
+
+    # Set directory and common variables
+    WORKDIR /app
+    ENV CI=true
+    
+    # Enable corepack and use pnpm
+    RUN corepack enable
+    RUN corepack prepare pnpm@latest --activate
+    
+    # 1. Install Dependencies
+    # Copy only the package files first to leverage Docker layer caching
+    COPY package.json pnpm-lock.yaml ./
+    
+    # Run a full install (no --production) to ensure all devDependencies 
+    # (like lucide-react) needed for the build are present.
+    RUN pnpm install --frozen-lockfile
+    
+    # 2. Build the Application
+    # Copy the rest of the application code
+    COPY . .
+    
+    # Run the build command. 
+    # Assumes Next.js is configured for 'output: "standalone"' in next.config.js
+    RUN pnpm build
+    
+    # -----------------------------------------------------------------
+    # STAGE 2: RUNNER
+    # Purpose: Create a minimal image that only contains the files needed to serve the built app.
+    # -----------------------------------------------------------------
+    FROM node:20-alpine AS runner
+    
+    WORKDIR /app
+    
+    # Set production environment variables
+    ENV NODE_ENV=production
+    ENV PORT=3000
+    
+    # Copy necessary files from the builder stage
+    # Copy the standalone server and package files
+    COPY --from=builder /app/.next/standalone/ ./
+    
+    # Copy the static assets and the package.json needed for the standalone server
+    COPY --from=builder /app/.next/static/ ./.next/static/
+    COPY --from=builder /app/public/ ./public/
+    
+    # Expose the port
+    EXPOSE 3000
+    
+    # Start the optimized Next.js server
+    CMD ["node", "server.js"]
+    

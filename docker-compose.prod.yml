@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # 1. Your Next.js Application (Production Server)
+  app:
+    # Uses the optimized multi-stage build in 'Dockerfile'
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    
+    container_name: nextjs_prod_app
+    
+    ports:
+      - "3000:3000" # Map host port 3000 to container port 3000
+      
+    # 🔑 Load ALL environment variables from your local .env file
+    env_file:
+      - .env 
+      
+    # 🚨 Production-Specific Environment Overrides 🚨
+    # This environment block ensures the app connects to the 'mongo' service 
+    # using the variables loaded from the .env file.
+    environment:
+      # Uses the MONGO_INITDB_ROOT_USERNAME and PASSWORD from your .env file
+      # Host is 'mongo' (the service name) for internal Docker networking
+      MONGODB_URI: "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/prod_db?authSource=admin"
+      
+    # Remove development volumes for a clean, self-contained production image
+    
+    depends_on:
+      - mongo 
+    
+    # Ensures the application automatically restarts
+    restart: always 
+
+  # 2. Your MongoDB Database (Persistence)
+  mongo:
+    image: mongo:latest
+    container_name: mongodb_prod
+    
+    # 🔑 Load MONGO_INITDB_ROOT_USERNAME/PASSWORD into the MongoDB container
+    env_file:
+      - .env
+      
+    # Persist data outside the container
+    volumes:
+      - mongodb_data:/data/db
+      
+    # Expose the port only if needed for external tools
+    ports:
+      - "27017:27017" 
+    
+    restart: always
+
+# Define the named volume for persistent data storage
+volumes:
+  mongodb_data:

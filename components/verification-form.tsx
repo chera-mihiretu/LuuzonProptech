@@ -12,6 +12,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
+import { toast } from "sonner"
 
 export function VerificationForm({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -29,6 +30,7 @@ export function VerificationForm({ className, ...props }: React.ComponentProps<"
             Didn&apos;t receive the code? <a href="#">Resend</a>
             {
               // TODO : Implement the resend email 
+              toast.error("Not implemented yet")
             }
           </FieldDescription>
         </FieldGroup>
