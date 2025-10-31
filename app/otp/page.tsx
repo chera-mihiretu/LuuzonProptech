@@ -1,17 +1,17 @@
-import {  VerificationForm } from "@/components/verification-form"
+import { OTPForm } from "@/components/otp-form"
 
 export default function OTPPage() {
   return (
     <div className="flex min-h-svh w-full">
       <div className="flex w-full items-center justify-center p-6 lg:w-1/2">
         <div className="w-full max-w-xs">
-          <VerificationForm />
+          <OTPForm />
         </div>
       </div>
-      <div className="relative hidden w-1/2 lg:block bg-muted">
+      <div className="relative hidden w-1/2 lg:block">
         <img
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover"
+          alt="Authentication"
+          className="absolute inset-0 h-full w-full object-cover bg-muted"
           height={1080}
           src="/placeholder.svg"
           width={1920}

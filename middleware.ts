@@ -40,7 +40,7 @@ export async function middleware(request: NextRequest) {
 	
 
   
-	if (pathname.startsWith('/complete-profile')) {
+	if (pathname.startsWith('/complete-profile') || pathname.startsWith('/redirecting')) {
 		if (userProfile?.role == UserRoles.AGENCY_MANAGER) {
 			return NextResponse.redirect(new URL('/agency/dashboard', request.url));
 		} else if (userProfile?.role == UserRoles.AGENCY_STAFF) {
@@ -73,5 +73,6 @@ export const config = {
     "/complete-profile",   
     "/tenant/:path*", 
     "/agency/:path*",
+    "/redirecting"
   ],
 };

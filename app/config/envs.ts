@@ -7,5 +7,6 @@ const SMTP_PORT: number = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) 
 const SMTP_USER: string = process.env.SMTP_USER || "";
 const SMTP_PASS: string = process.env.SMTP_PASS || "";
 const EMAIL_PROVIDER: string = process.env.EMAIL_PROVIDER || "nodemailer"; // future-proof switch
+const SENDER_EMAIL : string = process.env.SMTP_USER || "";
 
-export { MONGODB_URI, BETTER_AUTH_URL, RESEND_API_KEY, OUR_DOMAIN_EMAIL, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_PROVIDER };
+export { MONGODB_URI, BETTER_AUTH_URL, RESEND_API_KEY, OUR_DOMAIN_EMAIL, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_PROVIDER, SENDER_EMAIL };

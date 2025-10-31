@@ -39,6 +39,22 @@ export const loginFormSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters long." })
 })
 
+export const resetPasswordSchema = z.object({
+  
+  password: z.string()
+    .min(8, { message: "Password must be at least 8 characters long." }),
+    confrimPassword : z.string()
+}).refine((data) => data.confrimPassword === data.password , {
+  message: "Passwords do not match.",
+  path: ["confirmPassword"],
+})
+
+export const forgetPasswordSchema = z.object({
+  email: z.string().trim().toLowerCase().email({
+    message: "Invalid email address format.",
+  })
+})
+
 
 
 export const tenantRegistrationFormSchema = z.object({

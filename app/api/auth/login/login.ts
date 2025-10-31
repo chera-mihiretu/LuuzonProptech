@@ -15,7 +15,8 @@ export async function login(email: string, password: string) {
         
         return {
             success: true, 
-            message: "Log in success full"
+            message: "Log in success full", 
+            user
         };
         
     } catch (e) {

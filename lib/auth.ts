@@ -2,15 +2,17 @@ import { betterAuth, email } from "better-auth";
 import { client } from "../db/db";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
-import { sendMail } from "@/services/email/nodemailer";
+import { sendMailLink, sendMailOTP, sendMailResetLink } from "@/services/email/nodemailer";
+import { emailOTP } from "better-auth/plugins";
 const db = client.db();
 
 export const auth = betterAuth({
+    
     emailVerification: {
         
          sendVerificationEmail: async ({ user, url }) => {
             try{
-                await sendMail({email: user.email, name: user.name, url});
+                await sendMailLink({email: user.email, name: user.name, url});
             } catch(e) {
                 console.log(e)
             }
@@ -20,7 +22,10 @@ export const auth = betterAuth({
 
     emailAndPassword: {
         requireEmailVerification: true,
-        enabled: true
+        enabled: true,
+        sendResetPassword: async ({ user, url }, request) => {
+            await sendMailResetLink({email: user.email, name: user.name, url});
+        }
     },
 
     database: mongodbAdapter(db, {
@@ -28,5 +33,6 @@ export const auth = betterAuth({
     }),
     plugins: [
         nextCookies(), 
+        
     ]
 }); 
