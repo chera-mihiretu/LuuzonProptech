@@ -11,12 +11,15 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { registerUserEmail } from "@/app/api/auth/register/register";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
+import GoogleIcon from "@/data/icons";
 
 
 
@@ -35,6 +38,14 @@ export function SignupForm({
       confirmPassword: ""
     }
   })
+
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    const data = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: '/redirecting',
+    });
+  };
   
 
   async function createAccountForTenant(value: z.infer<typeof tenantRegistrationFormSchema>) {
@@ -84,9 +95,20 @@ export function SignupForm({
             {
               // TODO : Implement the sign up of users if not verified 
             }
+            <Field>
+
             <Button type="submit" disabled={isLoading}>
               {!isLoading ? "Create Account" : "Creating Account ..."}
             </Button>
+            </Field>
+            <FieldSeparator className="mb-2 mt-2">Or continue with</FieldSeparator>
+
+            <Field>
+              <Button variant="outline" type="button" onClick={signInWithGoogle} disabled={isLoading}>
+                <GoogleIcon/>
+                Login with Google
+              </Button>
+            </Field>
             <FieldDescription className="text-center">
               Already have an account?{" "}
               <a href="/login" className="underline underline-offset-4">

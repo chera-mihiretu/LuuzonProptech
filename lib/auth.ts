@@ -4,9 +4,16 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
 import { sendMailLink, sendMailOTP, sendMailResetLink } from "@/services/email/nodemailer";
 import { emailOTP } from "better-auth/plugins";
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "@/app/config/envs";
 const db = client.db();
 
 export const auth = betterAuth({
+    socialProviders: {
+        google: { 
+            clientId: GOOGLE_CLIENT_ID, 
+            clientSecret: GOOGLE_CLIENT_SECRET, 
+        }, 
+    },
     
     emailVerification: {
         

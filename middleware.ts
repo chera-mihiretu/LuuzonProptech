@@ -34,13 +34,10 @@ export async function middleware(request: NextRequest) {
   
   
 	// If a document is missing → force profile completion
-	if (!userProfile) {
-		return NextResponse.redirect(new URL("/complete-profile", request.url));
-	}
-	
-
-  
-	if (pathname.startsWith('/complete-profile') || pathname.startsWith('/redirecting')) {
+	if (!userProfile ) {
+    if (!pathname.startsWith('/complete-profile'))
+		  return NextResponse.redirect(new URL("/complete-profile", request.url));
+	} else if  (pathname.startsWith('/complete-profile') || pathname.startsWith('/redirecting')) {
 		if (userProfile?.role == UserRoles.AGENCY_MANAGER) {
 			return NextResponse.redirect(new URL('/agency/dashboard', request.url));
 		} else if (userProfile?.role == UserRoles.AGENCY_STAFF) {

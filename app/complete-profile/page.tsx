@@ -3,15 +3,28 @@ import { useState } from "react"
 import { GalleryVerticalEnd } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import AgencyForm from "@/components/agency-form"
-
-export default function CompleteProfileForm() {
+import { saveUserAsTenant } from "../api/auth/complete-profile/complete-profile"
+import { toast } from "sonner"
+import {useRouter} from "next/navigation";
+export default function CompleteProfile() {
   const [role, setRole] = useState<"tenant" | "agency" | null>(null)
   const [isLoading, setLoading] = useState(false);
-
+  const router = useRouter()
   async function continueAsTenant () { 
     setLoading(true);
     // TODO : Save the user data to be user as a tenant 
+    
     setRole('tenant');
+
+    const {success, message} = await saveUserAsTenant();
+
+    if (success) {
+      toast.success(message)
+      router.push('/ridercting')
+    }else {
+      toast.error(message)
+    }
+    setLoading(false)
     // setLoading(false);
   }
   return (
@@ -48,7 +61,7 @@ export default function CompleteProfileForm() {
         <img
           src="/placeholder.svg"
           alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          className="absolu te inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
     </div>
