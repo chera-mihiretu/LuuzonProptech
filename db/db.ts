@@ -1,6 +1,7 @@
 import { MongoClient } from "mongodb";
-import { MONGO_URI } from "../app/config/envs";
+import { MONGODB_URI } from "../app/config/envs";
 
-const client = new MongoClient(MONGO_URI);
+console.log("🚀🚀🚀 MONGO_URI", MONGODB_URI);
+const client = new MongoClient(MONGODB_URI);
 
 export { client };
