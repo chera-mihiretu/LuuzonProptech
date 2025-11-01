@@ -1,6 +1,8 @@
 export interface UserModel {
+    _id?: string, 
     userId: string;
     userEmail: string
+    userName: string
     agencyName?: string;
     managerName?: string;
     password?: string;

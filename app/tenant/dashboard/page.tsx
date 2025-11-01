@@ -1,19 +1,16 @@
 'use client';
 import { TenantSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+
+import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { Checkbox } from "@radix-ui/react-checkbox";
+import { Label } from "@radix-ui/react-dropdown-menu";
+import { Check } from "lucide-react";
 
 export default function TenantDashboard() {
   return (
@@ -32,7 +29,17 @@ export default function TenantDashboard() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl" />
+            <div className="bg-muted/50 aspect-video rounded-xl" >
+            <Card>
+              <CardHeader>
+                <CardTitle>User Settings</CardTitle>
+                <CardDescription>Edit your profile and preference</CardDescription>
+              </CardHeader>
+              
+              
+
+            </Card>
+            </div>
             <div className="bg-muted/50 aspect-video rounded-xl" />
             <div className="bg-muted/50 aspect-video rounded-xl" />
           </div>

@@ -16,6 +16,7 @@ import { forgetPasswordSchema } from "@/app/zod_validation/auth_validation"
 import { toast } from "sonner"
 import { useState } from "react";
 import { forgetPassword } from "@/app/api/auth/reset-password/forget-password";
+import MY_ROUTES from "@/data/routes";
 export function ForgetPasswordForm({
   className,
   ...props
@@ -30,7 +31,7 @@ export function ForgetPasswordForm({
 
   async function onSubmit(values: z.infer<typeof forgetPasswordSchema>) {
     setLoading(true);
-    const {success, message} = await forgetPassword(values.email, '/reset-password');
+    const {success, message} = await forgetPassword(values.email, MY_ROUTES.resetPassword);
     if (success) {
         toast.success(message)
     } else {

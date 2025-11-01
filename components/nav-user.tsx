@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation"
 import { User } from "better-auth"
 import { logout } from "@/app/api/auth/logout/logout"
 import { toast } from "sonner"
+import MY_ROUTES from "@/data/routes"
 
 export function NavUser( user: User  ) {
   const { isMobile } = useSidebar()
@@ -39,7 +40,7 @@ export function NavUser( user: User  ) {
 
     if (success) {
       toast.success(message);
-      router.push('/login');
+      router.push(MY_ROUTES.login);
     } else {
       toast.error(message);
     }

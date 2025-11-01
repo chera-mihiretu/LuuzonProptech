@@ -22,6 +22,7 @@ import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
+import MY_ROUTES from "@/data/routes";
 export function LoginForm({
   className,
   ...props
@@ -41,7 +42,7 @@ export function LoginForm({
     setLoading(true);
     const data = await authClient.signIn.social({
       provider: "google",
-      callbackURL: '/redirecting',
+      callbackURL: MY_ROUTES.redirect,
     });
   };
 
@@ -50,7 +51,7 @@ export function LoginForm({
     const {success, message} = await login(values.email, values.password);
     if (success) {
         toast.success(message)
-        router.push('/redirecting')
+        router.push(MY_ROUTES.redirect)
     } else {
       toast.error(message)
     }
@@ -74,7 +75,7 @@ export function LoginForm({
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
             <a
-              href="/forget-password"
+              href={MY_ROUTES.forgetPassword}
               className="ml-auto text-sm underline-offset-4 hover:underline"
             >
               Forgot your password?

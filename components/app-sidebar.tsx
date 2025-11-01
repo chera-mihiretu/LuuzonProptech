@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import {
+  Activity,
   PieChart,
   Settings,
   Target,
@@ -25,6 +26,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentUser } from "@/app/api/auth/get-user/get-current-user"
 import { User } from "better-auth"
+import MY_ROUTES from "@/data/routes"
+import { title } from "process"
+import { ur } from "zod/v4/locales"
 // This is sample data.
 const agentData = {
   navMain: [
@@ -46,6 +50,10 @@ const agentData = {
           title: "My Properties",
           url: "#",
         },
+        {
+          title: "My Teams",
+          url: MY_ROUTES.agencies.teams
+        }
       ],
     },
     
@@ -75,7 +83,7 @@ export function AgentSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
       if (user) {
         setUser(user);
       } else {
-        router.push('/login');
+        router.push(MY_ROUTES.login);
       }
     };
     fetchUser();
@@ -144,7 +152,7 @@ export function TenantSidebar({ ...props }: React.ComponentProps<typeof Sidebar>
       if (user) {
         setUser(user);
       } else {
-        router.push('/login');
+        router.push(MY_ROUTES.login);
       }
     };
     fetchUser();
@@ -155,6 +163,91 @@ export function TenantSidebar({ ...props }: React.ComponentProps<typeof Sidebar>
       <SidebarContent>
         <NavMain items={tenantData.navMain} />
         <NavProjects projects={tenantData.projects} />
+      </SidebarContent>
+      <SidebarFooter>
+        {user && <NavUser {...user} />}
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  )
+}
+
+
+const adminData = {
+  navMain: [
+    {
+      title: "Accounts",
+      url: "#",
+      icon: UserCog,
+      isActive: true,
+      items: [
+        {
+          title: "Agents",
+          url: "#",
+        },
+        {
+          title: "Tenants",
+          url: "#",
+        },
+      ],
+      
+    },
+    {
+      title: "Activities", 
+      url: '#', 
+      icon: Activity, 
+      isActive: true, 
+      items: [
+        {
+          title: "New Agencies",
+          url: "#",
+        },
+        {
+          title: "Property Posts",
+          url: "#",
+        },
+        {
+          title: "Applications",
+          url: "#",
+        },
+        {
+          title: "Complaints",
+          url: "#",
+        },
+      ]
+    }
+    
+    
+    
+  ],
+  projects: [
+    {
+      name: "Setting", 
+      url: "#", 
+      icon: Settings
+    }
+  ],
+}
+export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter();
+  const [user, setUser] = useState<User|null>(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getCurrentUser();
+      if (user) {
+        setUser(user);
+      } else {
+        router.push(MY_ROUTES.login);
+      }
+    };
+    fetchUser();
+  }, [router]);
+  
+  return (
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarContent>
+        <NavMain items={adminData.navMain} />
+        <NavProjects projects={adminData.projects} />
       </SidebarContent>
       <SidebarFooter>
         {user && <NavUser {...user} />}

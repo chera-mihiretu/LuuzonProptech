@@ -6,6 +6,7 @@ import AgencyForm from "@/components/agency-form"
 import { saveUserAsTenant } from "../api/auth/complete-profile/complete-profile"
 import { toast } from "sonner"
 import {useRouter} from "next/navigation";
+import MY_ROUTES from "@/data/routes"
 export default function CompleteProfile() {
   const [role, setRole] = useState<"tenant" | "agency" | null>(null)
   const [isLoading, setLoading] = useState(false);
@@ -20,7 +21,7 @@ export default function CompleteProfile() {
 
     if (success) {
       toast.success(message)
-      router.push('/ridercting')
+      router.push(MY_ROUTES.redirect)
     }else {
       toast.error(message)
     }

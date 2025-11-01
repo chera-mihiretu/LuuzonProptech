@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { registerUserEmail } from "@/app/api/auth/register/register";
 import { toast } from "sonner";
+import MY_ROUTES from "@/data/routes";
 
 
 
@@ -43,7 +44,7 @@ export function CompleteProfileForm({
     const {success, message} = await registerUserEmail(value.email, value.password, value.name);
     if (success) {
       toast.success(message);
-      router.push('/verification')
+      router.push(MY_ROUTES.verification)
     } else {
       toast.error(message);
     }

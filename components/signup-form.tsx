@@ -20,6 +20,9 @@ import { registerUserEmail } from "@/app/api/auth/register/register";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import GoogleIcon from "@/data/icons";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { AgentForm } from "@/components/register/agent-form";
+import { TenantForm } from "@/components/register/tenant-form";
 
 
 
@@ -27,98 +30,69 @@ export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [currentTab, setCurrentTab] = useState("tenant");
+  const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setLoading] = useState(false);
-  const router = useRouter()
 
-  const form = useForm<z.infer<typeof tenantRegistrationFormSchema>>({
-    resolver: zodResolver(tenantRegistrationFormSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: ""
-    }
-  })
-
-  const signInWithGoogle = async () => {
-    setLoading(true);
-    const data = await authClient.signIn.social({
-      provider: "google",
-      callbackURL: '/redirecting',
-    });
-  };
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   
 
-  async function createAccountForTenant(value: z.infer<typeof tenantRegistrationFormSchema>) {
-    setLoading(true);
 
-    const {success, message} = await registerUserEmail(value.email, value.password, value.name);
-    if (success) {
-      toast.success(message);
-      router.push('/verification')
-    } else {
-      toast.error(message);
-    }
-    setLoading(false);
-  }
+  const handleNext = () => {
+    setCurrentPage((prev) => (prev + 1) % 2);
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form onSubmit={form.handleSubmit(createAccountForTenant)}>
-        <FieldGroup>
-          <div className="flex flex-col items-center gap-1 text-center">
-            <h1 className="text-2xl font-bold">Create your account</h1>
-            <p className="text-muted-foreground text-sm text-balance">
-              Fill in the form below to create your account
-            </p>
-          </div>
-          <Field>
-            <FieldLabel htmlFor="name">name</FieldLabel>
-            <Input id="name" type="text" placeholder="John Doe" {...form.register("name")} />
-            <FieldError errors={[{ message: form.formState.errors.name?.message }]} />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
-            <Input id="email" type="email" placeholder="m@example.com" {...form.register("email")} />
-            <FieldError errors={[{ message: form.formState.errors.email?.message }]} />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="password">Password</FieldLabel>
-            <Input id="password" type="password" {...form.register("password")} />
-            <FieldError errors={[{ message: form.formState.errors.password?.message }]} />
-          </Field>
-          <Field>
-          <FieldLabel htmlFor="confirmPassword">Password</FieldLabel>
-            <Input id="confirmPassword" type="password" {...form.register("confirmPassword")} />
-            <FieldError errors={[{ message: form.formState.errors.confirmPassword?.message }]} />
-          </Field>
-          <Field>
-            {
-              // TODO : Implement the sign up of users if not verified 
-            }
-            <Field>
+      <Tabs
+        defaultValue="tenant"
+        value={currentTab}
+        onValueChange={(value) => {
+          setCurrentTab(value);
+        }}
+        className="w-full"
+      >
+        <TabsList className="flex justify-center w-full">
+          <TabsTrigger value="tenant" className="flex-1 text-center">Tenant</TabsTrigger>
+          <TabsTrigger value="agency" className="flex-1 text-center">Agency</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tenant">
+          <TenantForm 
+          next={handleNext}  
+          currentPage={currentPage} 
+          isLoading={isLoading} 
+          setLoading={setLoading} 
+          
+          name={name}
+          email={email}
+          password={password}
+          confirmPassword={confirmPassword}
+          setName={setName}
+          setEmail={setEmail}
+          setPassword={setPassword}
+          setConfirmPassword={setConfirmPassword}
+          />
+        </TabsContent>
+        <TabsContent value="agency">
+          <AgentForm 
+          next={handleNext}  
+          currentPage={currentPage} 
+          isLoading={isLoading} 
+          setLoading={setLoading} 
 
-            <Button type="submit" disabled={isLoading}>
-              {!isLoading ? "Create Account" : "Creating Account ..."}
-            </Button>
-            </Field>
-            <FieldSeparator className="mb-2 mt-2">Or continue with</FieldSeparator>
-
-            <Field>
-              <Button variant="outline" type="button" onClick={signInWithGoogle} disabled={isLoading}>
-                <GoogleIcon/>
-                Login with Google
-              </Button>
-            </Field>
-            <FieldDescription className="text-center">
-              Already have an account?{" "}
-              <a href="/login" className="underline underline-offset-4">
-                Login 
-              </a>
-            </FieldDescription>
-          </Field>
-        </FieldGroup>
-      </form>
-       
+          name={name}
+          email={email}
+          password={password}
+          confirmPassword={confirmPassword}
+          setName={setName}
+          setEmail={setEmail}
+          setPassword={setPassword}
+          setConfirmPassword={setConfirmPassword} />
+        </TabsContent>
+      </Tabs>
     </div>
-  )
+  );
 }

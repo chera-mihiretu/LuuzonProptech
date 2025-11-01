@@ -18,6 +18,7 @@ import { toast } from "sonner"
 import { useState } from "react";
 import { resetPassword } from "@/app/api/auth/reset-password/reset-password";
 import { useSearchParams } from "next/navigation";
+import MY_ROUTES from "@/data/routes";
 export function ResetPasswordForm({
   className,
   ...props
@@ -44,7 +45,7 @@ export function ResetPasswordForm({
     const {success, message} = await resetPassword(values.password, token);
     if (success) {
         toast.success(message)
-        router.push('/login')
+        router.push(MY_ROUTES.login)
     } else {
       toast.error(message)
     }
