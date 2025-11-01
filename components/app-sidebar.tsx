@@ -138,7 +138,7 @@ const tenantData = {
     },
     {
       name: "Setting", 
-      url: "#", 
+      url: MY_ROUTES.tenants.settings, 
       icon: Settings
     }
   ],
@@ -223,7 +223,7 @@ const adminData = {
   projects: [
     {
       name: "Setting", 
-      url: "#", 
+      url: MY_ROUTES.admin.settings, 
       icon: Settings
     }
   ],

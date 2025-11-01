@@ -7,7 +7,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-export default function AgencyDashboardPage() {
+export default function AgencySettingsPage() {
   return (
     <SidebarProvider>
       <AgentSidebar />
