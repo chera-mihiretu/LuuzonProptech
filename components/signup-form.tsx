@@ -23,6 +23,7 @@ import GoogleIcon from "@/data/icons";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AgentForm } from "@/components/register/agent-form";
 import { TenantForm } from "@/components/register/tenant-form";
+import MY_ROUTES from "@/data/routes";
 
 
 
@@ -92,6 +93,12 @@ export function SignupForm({
           setPassword={setPassword}
           setConfirmPassword={setConfirmPassword} />
         </TabsContent>
+        <FieldDescription className="text-center">
+            Go back to?{" "}
+            <a href={MY_ROUTES.login} className="underline underline-offset-4">
+              log in
+            </a>
+          </FieldDescription>
       </Tabs>
     </div>
   );

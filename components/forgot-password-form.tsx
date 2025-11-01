@@ -7,6 +7,7 @@ import {  useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Field,
+  FieldDescription,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -56,6 +57,12 @@ export function ForgetPasswordForm({
         <Field>
           <Button type="submit" disabled={isLoading}> {isLoading ? "Reseting ..." : "Reset Password" }</Button>
         </Field>
+        <FieldDescription className="text-center">
+            Go back to?{" "}
+            <a href={MY_ROUTES.login} className="underline underline-offset-4">
+              log in
+            </a>
+          </FieldDescription>
 
       </FieldGroup>
     </form>
