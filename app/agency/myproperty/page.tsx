@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import AgenciesSidebar from "@/components/agency/agency-side-bar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { AddPropertyForm } from "@/components/agency/property/add-property-form";
+import { EditPropertyForm } from "@/components/agency/property/edit-property-form";
 import { getMyProperties, deleteProperty } from "@/app/api/agency/properties/manage-properties";
 import { PropertyList } from "@/components/property/property-list";
 import { DeletePropertyDialog } from "@/components/property/delete-property-dialog";
@@ -19,8 +21,11 @@ import { toast } from "sonner";
 
 
 export default function MyPropertyPage() {
+  const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [propertyToEdit, setPropertyToEdit] = useState<any>(null);
   const [propertyToDelete, setPropertyToDelete] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [properties, setProperties] = useState<any[]>([]);
@@ -64,14 +69,20 @@ export default function MyPropertyPage() {
   };
 
   const handlePropertyClick = (property: any) => {
-    // TODO: Navigate to property detail page
-    console.log('Property clicked:', property);
+    if (property._id) {
+      router.push(`/agency/myproperty/${property._id}`);
+    }
   };
 
   const handleUpdate = (property: any) => {
-    // TODO: Implement update functionality
-    console.log('Update property:', property);
-    // You can open a dialog with the property form pre-filled
+    // Extract longitude and latitude from location_point if it exists
+    const propertyWithCoords = {
+      ...property,
+      longitude: property.location_point?.coordinates?.[0],
+      latitude: property.location_point?.coordinates?.[1],
+    };
+    setPropertyToEdit(propertyWithCoords);
+    setIsEditDialogOpen(true);
   };
 
   const handleDelete = (property: any) => {
@@ -147,6 +158,43 @@ export default function MyPropertyPage() {
                 fetchProperties(currentPage); // Refresh the properties list
               }}
             />
+          </DialogContent>
+        </Dialog>
+
+        <Dialog 
+          open={isEditDialogOpen} 
+          onOpenChange={(open) => {
+            if (!open) {
+              setIsEditDialogOpen(false);
+              setPropertyToEdit(null);
+            }
+          }}
+        >
+          <DialogContent 
+            className="max-w-3xl max-h-[90vh] overflow-y-auto"
+            onInteractOutside={(e) => e.preventDefault()}
+            onEscapeKeyDown={(e) => e.preventDefault()}
+          >
+            <DialogHeader>
+              <DialogTitle>Edit Property</DialogTitle>
+              <DialogDescription>
+                Update the property details below.
+              </DialogDescription>
+            </DialogHeader>
+            {propertyToEdit && (
+              <EditPropertyForm
+                property={propertyToEdit}
+                onSuccess={() => {
+                  setIsEditDialogOpen(false);
+                  setPropertyToEdit(null);
+                  fetchProperties(currentPage);
+                }}
+                onCancel={() => {
+                  setIsEditDialogOpen(false);
+                  setPropertyToEdit(null);
+                }}
+              />
+            )}
           </DialogContent>
         </Dialog>
 

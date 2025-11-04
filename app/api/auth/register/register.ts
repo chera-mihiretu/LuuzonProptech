@@ -90,7 +90,7 @@ export async function registerUserAgency(
                 manager_name: name
             },
             role: UserRoles.AGENCY_MANAGER, 
-            created_at: new Date(), 
+            created_at: new Date(),
         }
 
         success = true;
@@ -140,7 +140,7 @@ export async function registerUserTenant(
             email: email,  
             name: name, 
             role: UserRoles.TENANT, 
-            created_at: new Date()
+            created_at: new Date(),
         }
 
         success = true;
@@ -171,7 +171,7 @@ export async function createAdminForTheApp(userId: string, name : string, email 
             name: name, 
             role: UserRoles.ADMIN,
             email: email,
-            created_at: new Date(), 
+            created_at: new Date(),
         }
         await userCollection.insertOne(adminUser as any);
 

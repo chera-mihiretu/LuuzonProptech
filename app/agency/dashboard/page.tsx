@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import AgenciesSidebar from "@/components/agency/agency-side-bar";
 import { AgentSidebar } from "@/components/app-sidebar"
 import { Separator } from "@/components/ui/separator"
@@ -7,8 +8,16 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { updateLastSignIn } from "@/app/api/auth/update-last-signin";
 
 export default function AgencyDashboardPage() {
+  useEffect(() => {
+    // Update last_sign_in when dashboard loads
+    updateLastSignIn().catch((error) => {
+      console.error("Failed to update last_sign_in:", error);
+    });
+  }, []);
+
   return (
    <AgenciesSidebar>
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">

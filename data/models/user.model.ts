@@ -11,6 +11,7 @@ export interface UserModel {
     agency?: AgencyModel;
     role: string;
     created_at: Date;
+    last_sign_in?: Date;
 }
 
 export interface AgencyModel {

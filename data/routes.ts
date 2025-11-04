@@ -24,7 +24,8 @@ const  MY_ROUTES = {
         dashboard: '/agency/dashboard',
         teams: '/agency/teams',
         settings: '/agency/settings',
-        myproperty: '/agency/myproperty'
+        myproperty: '/agency/myproperty',
+        propertyDetail: (id: string) => `/agency/myproperty/${id}`
     },
     admin: {
         current: '/admin', 

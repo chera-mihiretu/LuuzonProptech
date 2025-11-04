@@ -8,6 +8,7 @@ import { agencyPropertiesCollection, userCollection } from "@/db/collections";
 import { UserModel } from "@/data/models/user.model";
 import { ObjectId } from "mongodb";
 import { deleteMultipleFromSupabase } from "@/lib/supabase";
+import { uploadMultipleToSupabase } from "@/lib/supabase";
 
 
 export async function addProperty(propertyData: PropertyModel) {
@@ -122,7 +123,7 @@ export async function getMyProperties(page: number = 1, limit: number = 12) {
     };
 }
 
-export async function deleteProperty(propertyId: string) {
+export async function deleteProperty(propertyId: string) : Promise<{ success: boolean, message: string }> {
     try {
         // Validate authorization - only AGENCY_MANAGER can delete
         const allowed = await validateAuthorization([UserRoles.AGENCY_MANAGER]);
@@ -220,7 +221,10 @@ export async function deleteProperty(propertyId: string) {
 
                     if (filePaths.length === 0 || !bucketName) {
                         console.warn('No valid file paths extracted from URLs or bucket name not found:', imageUrls);
-                        return;
+                        return {
+                            success: false,
+                            message: "No valid file paths extracted from URLs or bucket name not found"
+                        };
                     }
 
                     // Group paths by bucket (in case there are multiple buckets, though unlikely)
@@ -280,6 +284,204 @@ export async function deleteProperty(propertyId: string) {
         return {
             success: false,
             message: error.message || "Error deleting property"
+        };
+    }
+}
+
+export async function updateProperty(propertyId: string, propertyData: PropertyModel, imagesToDelete?: string[]) {
+    try {
+        // Validate authorization - only AGENCY_MANAGER can update
+        const allowed = await validateAuthorization([UserRoles.AGENCY_MANAGER]);
+        if (!allowed) {
+            return {
+                success: false,
+                message: "You are not authorized to update properties. Only Agency Managers can update properties."
+            };
+        }
+
+        const session = await getMeSession();
+        const userId = session.user.id;
+
+        // Convert string ID to ObjectId
+        let objectId: ObjectId;
+        try {
+            objectId = new ObjectId(propertyId);
+        } catch (error) {
+            return {
+                success: false,
+                message: "Invalid property ID"
+            };
+        }
+
+        // Find the property to verify ownership
+        const existingProperty = await agencyPropertiesCollection.findOne<PropertyModel>({
+            _id: objectId,
+            user_id: userId
+        });
+
+        if (!existingProperty) {
+            return {
+                success: false,
+                message: "Property not found or you don't have permission to update it"
+            };
+        }
+
+        // Delete removed images from Supabase if any
+        if (imagesToDelete && imagesToDelete.length > 0) {
+            try {
+                // Extract bucket name and file paths from URLs
+                let bucketName: string | null = null;
+                const filePaths = imagesToDelete.map(url => {
+                    try {
+                        const publicIndex = url.indexOf('/public/');
+                        if (publicIndex === -1) return null;
+                        
+                        const afterPublic = url.substring(publicIndex + '/public/'.length);
+                        const parts = afterPublic.split('/');
+                        
+                        if (parts.length < 2) return null;
+                        
+                        const bucket = parts[0];
+                        if (!bucketName) {
+                            bucketName = bucket;
+                        }
+                        
+                        const path = parts.slice(1).join('/');
+                        return path ? { bucket, path } : null;
+                    } catch {
+                        return null;
+                    }
+                }).filter((item): item is { bucket: string; path: string } => item !== null);
+
+                if (filePaths.length > 0 && bucketName) {
+                    const pathsByBucket = new Map<string, string[]>();
+                    filePaths.forEach(({ bucket, path }) => {
+                        if (!pathsByBucket.has(bucket)) {
+                            pathsByBucket.set(bucket, []);
+                        }
+                        pathsByBucket.get(bucket)!.push(path);
+                    });
+
+                    for (const [bucket, paths] of pathsByBucket.entries()) {
+                        await deleteMultipleFromSupabase(bucket, paths);
+                    }
+                }
+            } catch (error) {
+                console.error('Error deleting images from Supabase:', error);
+                // Continue with update even if image deletion fails
+            }
+        }
+
+        // Prepare updated property data
+        const updatedProperty: Partial<PropertyModel> = {
+            ...propertyData,
+            updated_at: new Date(),
+        };
+
+        // Don't allow changing _id, agency_id, or user_id
+        delete updatedProperty._id;
+        delete updatedProperty.agency_id;
+        delete updatedProperty.user_id;
+
+        // Update the property
+        const result = await agencyPropertiesCollection.updateOne(
+            { _id: objectId, user_id: userId },
+            { $set: updatedProperty }
+        );
+
+        if (result.matchedCount === 0) {
+            return {
+                success: false,
+                message: "Property not found or you don't have permission to update it"
+            };
+        }
+
+        if (result.modifiedCount === 0) {
+            return {
+                success: true,
+                message: "Property updated (no changes detected)",
+                data: {
+                    propertyId: propertyId
+                }
+            };
+        }
+
+        return {
+            success: true,
+            message: "Property updated successfully",
+            data: {
+                propertyId: propertyId
+            }
+        };
+    } catch (e) {
+        const error = e as Error;
+        return {
+            success: false,
+            message: error.message || "Error updating property"
+        };
+    }
+}
+
+export async function getPropertyById(propertyId: string) {
+    try {
+        const allowed = await validateAuthorization([UserRoles.AGENCY_MANAGER, UserRoles.AGENCY_STAFF]);
+
+        if (!allowed) {
+            return {
+                success: false,
+                message: "You are not authorized to view properties",
+                data: null
+            };
+        }
+
+        const session = await getMeSession();
+        const userId = session.user.id;
+
+        // Convert string ID to ObjectId
+        let objectId: ObjectId;
+        try {
+            objectId = new ObjectId(propertyId);
+        } catch (error) {
+            return {
+                success: false,
+                message: "Invalid property ID",
+                data: null
+            };
+        }
+
+        // Find the property
+        const property = await agencyPropertiesCollection.findOne<PropertyModel>({
+            _id: objectId,
+            user_id: userId
+        });
+
+        if (!property) {
+            return {
+                success: false,
+                message: "Property not found or you don't have permission to view it",
+                data: null
+            };
+        }
+
+        // Serialize MongoDB objects to plain objects for Client Components
+        const serializedProperty = {
+            ...property,
+            _id: property._id?.toString(),
+            agency_id: property.agency_id?.toString(),
+            created_at: property.created_at?.toISOString(),
+            updated_at: property.updated_at?.toISOString(),
+        };
+
+        return {
+            success: true,
+            data: serializedProperty
+        };
+    } catch (e) {
+        const error = e as Error;
+        return {
+            success: false,
+            message: error.message || "Error fetching property",
+            data: null
         };
     }
 }

@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import { TenantSidebar } from "@/components/app-sidebar"
 
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,8 +12,16 @@ import {
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { Check } from "lucide-react";
+import { updateLastSignIn } from "@/app/api/auth/update-last-signin";
 
 export default function TenantDashboard() {
+  useEffect(() => {
+    // Update last_sign_in when dashboard loads
+    updateLastSignIn().catch((error) => {
+      console.error("Failed to update last_sign_in:", error);
+    });
+  }, []);
+
   return (
     <SidebarProvider>
       <TenantSidebar />
