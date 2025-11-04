@@ -7,6 +7,7 @@ import { UserModel } from "@/data/models/user.model";
 import { UserRoles } from "@/data/constants";
 import { userCollection } from "@/db/collections";
 import { createAdminForTheApp } from "../register/register";
+import { ObjectId } from "mongodb";
 
 
 export async function saveUserAsTenant() {
@@ -25,11 +26,11 @@ export async function saveUserAsTenant() {
     }
 
     const user : UserModel = {
-        userId: session.user.id,
-        userEmail: session.user.email,
-        userName: session.user.name,
+        user_id: session.user.id,
+        email: session.user.email,
+        name: session.user.name,
         role: UserRoles.TENANT, 
-        createdAt: new Date(),        
+        created_at: new Date(),        
     }
 
     try {
@@ -70,15 +71,19 @@ export async function saveUserAsAgency(
         return createAdminForTheApp(session.user.id, session.user.name, session.user.email);
     }
     const user : UserModel = {
-        userId: session.user.id,
-        userEmail: session.user.email,
-        userName: session.user.name, 
-        agencyName: agencyName,
-        managerName: managerName, 
+        user_id: session.user.id,
+        email: session.user.email,
+        name: session.user.name, 
+        agency: {
+            _id: new ObjectId(),
+            name: agencyName,
+            email: agencyEmail,
+            address: address,
+            siren_siret: siren,
+            manager_name: managerName
+        },
         role: UserRoles.AGENCY_MANAGER, 
-        address, 
-        agencyEmail, 
-        createdAt: new Date(),        
+        created_at: new Date(),        
     }
 
     try {

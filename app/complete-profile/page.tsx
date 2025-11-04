@@ -13,12 +13,10 @@ export default function CompleteProfile() {
   const router = useRouter()
   async function continueAsTenant () { 
     setLoading(true);
-    // TODO : Save the user data to be user as a tenant 
-    
     setRole('tenant');
 
     const {success, message} = await saveUserAsTenant();
-
+    
     if (success) {
       toast.success(message)
       router.push(MY_ROUTES.redirect)
@@ -26,7 +24,7 @@ export default function CompleteProfile() {
       toast.error(message)
     }
     setLoading(false)
-    // setLoading(false);
+   
   }
   return (
     <div className="grid min-h-svh lg:grid-cols-2">

@@ -16,7 +16,7 @@ const preSessionEndpoints = [
   MY_ROUTES.resetPassword,
   MY_ROUTES.forgetPassword,
   MY_ROUTES.home,
-  MY_ROUTES.verification
+  MY_ROUTES.verification, 
 ]
 
 const completedUserEndpoints = [
@@ -27,6 +27,7 @@ const completedUserEndpoints = [
 const nonCompletedUserEndpoints = [
   MY_ROUTES.completeProfile,
 ]
+
 
 const redircetingEndpoints = [
   MY_ROUTES.redirect,
@@ -42,15 +43,19 @@ export async function middleware(request: NextRequest) {
 
   // 2. Not logged in → go to login
 
+
+
   if (!session) {
-    if (!preSessionEndpoints.some((p) => pathname.startsWith(p))) {
+    //! since user is not logged he can visit the presession endpoint only
+    if (!preSessionEndpoints.some((p) => p === '/' ?  pathname === p : pathname.startsWith(p) )) {
+     
       return NextResponse.redirect(new URL(MY_ROUTES.login, request.url));
     }
   } else {
 
 
     const userProfile : UserModel | null  = await userCollection.findOne<UserModel>({
-    userId: session?.user.id,
+    user_id: session?.user.id,
     });
     
     // If a document is missing → force profile completion
@@ -102,7 +107,7 @@ export const config = {
     '/complete-profile', 
     '/reset-password', 
     '/forget-password', 
-    '/verification'
-    
+    '/verification', 
+    '/complete-profile'
   ],
 };

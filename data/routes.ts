@@ -23,7 +23,8 @@ const  MY_ROUTES = {
         current: '/agency',
         dashboard: '/agency/dashboard',
         teams: '/agency/teams',
-        settings: '/agency/settings'
+        settings: '/agency/settings',
+        myproperty: '/agency/myproperty'
     },
     admin: {
         current: '/admin', 

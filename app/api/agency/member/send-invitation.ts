@@ -1,6 +1,6 @@
 'use server';
 import { userCollection } from "@/db/collections"
-import { validateAuthorization } from "../../authorization/role-validation"
+import { getMeSession, validateAuthorization } from "../../authorization/role-validation"
 import { auth } from "@/lib/auth"
 import MY_ROUTES from "@/data/routes"
 import { redirect } from "next/navigation"
@@ -13,17 +13,8 @@ import { headers } from "next/headers";
 
 
 export async function sendInvitation(email :string)  {
-    const session = await auth.api.getSession({
-        headers:   await headers()
-    })
-
-    if (!session) {
-        redirect(MY_ROUTES.login);
-    } 
-
-
     try {
-        if (!await validateAuthorization(session.user.id, UserRoles.AGENCY_MANAGER)) {
+        if (!await validateAuthorization(UserRoles.AGENCY_MANAGER)) {
             return {
                 success: false, 
                 message: "You cannot perform this action, Not authorized"
@@ -32,6 +23,8 @@ export async function sendInvitation(email :string)  {
         const count = await userCollection.findOne({
             userEmail: email, 
         })
+
+        const session = await getMeSession();
 
 
 
@@ -56,7 +49,6 @@ export async function sendInvitation(email :string)  {
 
         const invitationToken = await generateInvitationToken(
             session.user.id, 
-            user._id!
         );
 
         const url : string = `${BASE_URL}/singup?token=${invitationToken}`;
@@ -67,7 +59,7 @@ export async function sendInvitation(email :string)  {
                 email, 
                 url, 
                 agencyManager: session.user.name, 
-                agencyName: user.agencyName!
+                agencyName: user.agency?.name!
             }
 
         )

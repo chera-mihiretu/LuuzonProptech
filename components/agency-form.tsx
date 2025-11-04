@@ -50,7 +50,7 @@ export function AgencyForm(loading : SetLoading) {
     );
     console.log(success, message)
     if (success) {
-        console.log('Why is router not working ')
+        
         toast.success(message)
         router.push(MY_ROUTES.redirect)
     } else {    

@@ -48,7 +48,7 @@ const agentData = {
         },
         {
           title: "My Properties",
-          url: "#",
+          url: MY_ROUTES.agencies.myproperty,
         },
         {
           title: "My Teams",

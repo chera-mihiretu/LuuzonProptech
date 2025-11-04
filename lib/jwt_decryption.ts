@@ -2,17 +2,17 @@ import { JWT_SECRET_KEY } from '@/app/config/envs';
 import { sign, JwtPayload, SignOptions } from 'jsonwebtoken';
 
 export interface InvitationTokenPayload extends JwtPayload {
-  agency_id: string; 
-  email: string;     
-  sub?: 'employee_invite'; 
+  user_id: string; 
+  sub?: 'employee_invite';
+  exp?: number
 }
 
-export function generateInvitationToken(agencyId: string, inviteeEmail: string): string {
+export function generateInvitationToken(userID: string): string {
     
     const payload: InvitationTokenPayload = {
-        agency_id: agencyId, 
-        email: inviteeEmail,
-        sub: 'employee_invite' 
+        user_id: userID, 
+        sub: 'employee_invite', 
+        exp: Date.now() + (48 * 60 * 60 * 1000) // 48 hours
     };
 
     // Signing options

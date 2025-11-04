@@ -12,6 +12,10 @@ const GOOGLE_CLIENT_SECRET : string = process.env.GOOGLE_CLIENT_SECRET || '';
 const GOOGLE_CLIENT_ID : string = process.env.GOOGLE_CLIENT_ID || '';
 const JWT_SECRET_KEY : string = process.env.JWT_SECRET_KEY || '';
 const BASE_URL : string = BETTER_AUTH_URL;
+const NEXT_PUBLIC_SUPABASE_BUCKET : string = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || '';
+const SUPABASE_URL : string = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const SUPABASE_ANON_KEY : string = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const SUPABASE_SERVICE_ROLE_KEY : string = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 export { 
     MONGODB_URI, BETTER_AUTH_URL, 
     RESEND_API_KEY, OUR_DOMAIN_EMAIL, 
@@ -20,6 +24,10 @@ export {
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
     JWT_SECRET_KEY, 
-    BASE_URL
+    BASE_URL,
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    SUPABASE_SERVICE_ROLE_KEY,
+    NEXT_PUBLIC_SUPABASE_BUCKET
 
 };

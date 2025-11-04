@@ -7,6 +7,7 @@ import { UserModel } from "@/data/models/user.model";
 import { UserRoles } from "@/data/constants";
 import { role } from "better-auth/plugins";
 import { success } from "zod";
+import { ObjectId } from "mongodb";
 
 export async function registerUserEmail(email: string, password: string, name: string)  {
     // Server-side validation using existing schema (without confirmPassword)
@@ -59,11 +60,7 @@ export async function registerUserAgency(
     sirenNumber: string
 ) {
 
-    const count = await userCollection.countDocuments() 
-
-    if (count === 0) {
-        return createAdminForTheApp(name, email, password);
-    }
+   
 
     let success = false;
     let message = '';
@@ -75,20 +72,25 @@ export async function registerUserAgency(
                 password
             }
         })
+        const count = await userCollection.countDocuments() 
+
         if (count === 0) {
             return createAdminForTheApp(user.user.id, name, email);
         }
         const userModel : UserModel =  {
-            userId: user.user.id, 
-            userEmail: email, 
-            userName: name, 
-            agencyName: agencyName,
-            agencyEmail: agencyEmail, 
-            managerName: name, 
+            user_id: user.user.id, 
+            email: email, 
+            name: name, 
+            agency: {
+                _id: new ObjectId(),
+                name: agencyName,
+                email: agencyEmail,
+                address: agencyAddress,
+                siren_siret: sirenNumber,
+                manager_name: name
+            },
             role: UserRoles.AGENCY_MANAGER, 
-            address: agencyAddress, 
-            createdAt: new Date(), 
-            sirenSiret: sirenNumber, 
+            created_at: new Date(), 
         }
 
         success = true;
@@ -134,19 +136,18 @@ export async function registerUserTenant(
             return createAdminForTheApp(user.user.id, name, email);
         }
         const userModel : UserModel =  {
-            userId: user.user.id, 
-            userEmail: email,  
-            userName: name, 
-            managerName: name, 
+            user_id: user.user.id, 
+            email: email,  
+            name: name, 
             role: UserRoles.TENANT, 
-            createdAt: new Date()
+            created_at: new Date()
         }
 
         success = true;
         message = "Account created succesfully, Please check your email for verification !"
 
         
-        await userCollection.insertOne(userModel)
+        await userCollection.insertOne(userModel as any)
         
     } catch (e) {
         const error = e as Error;
@@ -166,13 +167,13 @@ export async function createAdminForTheApp(userId: string, name : string, email 
     try {
        
         const adminUser : UserModel = {
-            userName: name, 
-            userId: userId,
+            user_id: userId,
+            name: name, 
             role: UserRoles.ADMIN,
-            userEmail: email,
-            createdAt: new Date(), 
+            email: email,
+            created_at: new Date(), 
         }
-        await userCollection.insertOne(adminUser);
+        await userCollection.insertOne(adminUser as any);
 
         return {
             success: true, 
