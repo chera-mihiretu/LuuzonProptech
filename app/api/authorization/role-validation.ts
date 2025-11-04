@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 
-export async function validateAuthorization(role : UserRoles) {
+export async function validateAuthorization(roles : UserRoles[ ]) {
     const session = await auth.api.getSession({
         headers:   await headers()
     })
@@ -23,9 +23,7 @@ export async function validateAuthorization(role : UserRoles) {
         
 
         if (user) {
-           if (user.role === role ) {
-            return true; 
-           }
+           return roles.some((role) => role === user.role);
         }
         return false;
 
@@ -42,6 +40,6 @@ export async function getMeSession() {
     if (!session) {
         redirect(MY_ROUTES.login);
     }
-    
+
     return session;
 }

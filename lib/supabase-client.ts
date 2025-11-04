@@ -84,3 +84,41 @@ export async function uploadMultipleToSupabase(files: File[]): Promise<string[]>
   }
 }
 
+
+/**
+ * Deletes multiple files from Supabase storage (client-side)
+ * @param urls - Array of public URLs to delete
+ * @returns Number of successfully deleted files
+ */
+export async function clientDeleteMultipleFromSupabase(urls: string[]): Promise<number> {
+  try {
+    if (urls.length === 0) {
+      return 0;
+    }
+
+    // Extract file paths from URLs by taking the last element after splitting by '/'
+    // and prepending 'properties/' to match the storage path format
+    const actualPaths = urls.map(url => {
+      const fileName = url.split('/').pop() || '';
+      return `properties/${fileName}`;
+    });
+
+    console.log('Deleting paths (client-side):', actualPaths);
+
+    // Delete all files at once using client-side Supabase client
+    const { data, error } = await supabaseClient.storage
+      .from(supabaseBucket)
+      .remove(actualPaths);
+
+    if (error) {
+      console.error('Error deleting files from Supabase:', error);
+      return 0;
+    }
+
+    // Return the number of successfully deleted files
+    return data?.length || 0;
+  } catch (error) {
+    console.error('Error deleting multiple files from Supabase:', error);
+    return 0;
+  }
+}

@@ -11,7 +11,7 @@ import { useState, useRef } from "react";
 import { ImageIcon, X, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { uploadMultipleToSupabase } from "@/lib/supabase-client";
-import { addProperty } from "@/app/api/agency/properties/add_properties";
+import { addProperty } from "@/app/api/agency/properties/manage-properties";
 
 import {
   Dialog,

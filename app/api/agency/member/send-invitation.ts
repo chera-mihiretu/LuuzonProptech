@@ -14,7 +14,7 @@ import { headers } from "next/headers";
 
 export async function sendInvitation(email :string)  {
     try {
-        if (!await validateAuthorization(UserRoles.AGENCY_MANAGER)) {
+        if (!await validateAuthorization([UserRoles.AGENCY_MANAGER])) {
             return {
                 success: false, 
                 message: "You cannot perform this action, Not authorized"
