@@ -67,7 +67,7 @@ export async function addProperty(propertyData: PropertyModel) {
 }
 
 
-export async function getMyProperties(page: number = 1, limit: number = 12) {
+export async function getMyProperties(page: number = 1, limit: number = 12, status?: 'listed' | 'rented' | 'archived') {
     const allowed = await validateAuthorization([UserRoles.AGENCY_MANAGER, UserRoles.AGENCY_STAFF]);
 
     if (!allowed) {
@@ -90,13 +90,19 @@ export async function getMyProperties(page: number = 1, limit: number = 12) {
     // Calculate skip for pagination
     const skip = (page - 1) * limit;
     
+    // Build base query
+    const baseQuery: any = { user_id: userId };
+    if (status) {
+        baseQuery.status = status;
+    }
+
     // Get total count for pagination
-    const totalItems = await agencyPropertiesCollection.countDocuments({ user_id: userId });
+    const totalItems = await agencyPropertiesCollection.countDocuments(baseQuery);
     const totalPages = Math.ceil(totalItems / limit);
     
     // Fetch properties with pagination
     const properties : PropertyModel[] = await agencyPropertiesCollection
-        .find<PropertyModel>({ user_id: userId })
+        .find<PropertyModel>(baseQuery)
         .sort({ created_at: -1 }) // Sort by newest first
         .skip(skip)
         .limit(limit)

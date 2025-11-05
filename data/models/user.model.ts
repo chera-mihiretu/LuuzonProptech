@@ -6,6 +6,7 @@ import { ObjectId } from "mongodb";
 export interface UserModel {
     _id?: ObjectId, 
     user_id: string;
+    agency_owner_id?: string;
     email: string
     name: string
     agency?: AgencyModel;
@@ -21,4 +22,14 @@ export interface AgencyModel {
     address: string;
     siren_siret: string;
     manager_name: string;
+    permissions?: Permissions[]
 }
+
+export enum Permissions {
+    DELETE_PROPERT = 'delete_property', 
+    EDIT_PROPERTY = 'edit_property', 
+    ACCEPT_APPICATION = 'accept_application', 
+    REJECT_APPLICATION = 'reject_application', 
+    PERMISSION_EDIT = 'edit_permission',
+}
+

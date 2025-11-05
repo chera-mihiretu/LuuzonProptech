@@ -4,10 +4,11 @@ const db = client.db();
 
 const USER_PROFILES = "user_profiles";
 const AGENCY_PROPERTIES = "agency_properties";
-
+const INVITATIONS = "invitations";
 
 const userCollection = db.collection(USER_PROFILES);
 const agencyPropertiesCollection = db.collection(AGENCY_PROPERTIES);
+const invitationsCollection = db.collection(INVITATIONS);
 
 
-export { userCollection, agencyPropertiesCollection };
+export { userCollection, agencyPropertiesCollection, invitationsCollection };

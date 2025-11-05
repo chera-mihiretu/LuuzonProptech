@@ -20,7 +20,7 @@ import { DeletePropertyDialog } from "@/components/property/delete-property-dial
 import { toast } from "sonner";
 
 
-export default function MyPropertyPage() {
+export default function RentedPropertiesPage() {
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -41,14 +41,13 @@ export default function MyPropertyPage() {
   const fetchProperties = async (page: number = 1) => {
     try {
       setIsLoading(true);
-      const result = await getMyProperties(page, 12, 'listed');
+      const result = await getMyProperties(page, 12, 'rented');
       if (result.success && result.data) {
         setProperties(result.data);
         if (result.pagination) {
           setPagination(result.pagination);
         }
       } else if (Array.isArray(result)) {
-        // Fallback for old API format
         setProperties(result);
       }
     } catch (error) {
@@ -75,7 +74,6 @@ export default function MyPropertyPage() {
   };
 
   const handleUpdate = (property: any) => {
-    // Extract longitude and latitude from location_point if it exists
     const propertyWithCoords = {
       ...property,
       longitude: property.location_point?.coordinates?.[0],
@@ -106,7 +104,6 @@ export default function MyPropertyPage() {
         toast.success("Property deleted successfully!", { id: "delete-property" });
         setIsDeleteDialogOpen(false);
         setPropertyToDelete(null);
-        // Refresh the properties list
         await fetchProperties(currentPage);
       } else {
         toast.error(result.message || "Failed to delete property", { id: "delete-property" });
@@ -124,14 +121,14 @@ export default function MyPropertyPage() {
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">My Properties</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Rented Properties</h1>
             <p className="text-muted-foreground">
-              Manage and view all your listed properties
+              Manage and view your rented properties
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="secondary" onClick={() => router.push('/agency/myproperty')}>Listed</Button>
-            <Button variant="outline" onClick={() => router.push('/agency/myproperty/rented')}>Rented</Button>
+            <Button variant="outline" onClick={() => router.push('/agency/myproperty')}>Listed</Button>
+            <Button variant="secondary">Rented</Button>
             <Button onClick={() => setIsDialogOpen(true)}>
               <Plus className="size-4" />
               Add Property
@@ -140,7 +137,6 @@ export default function MyPropertyPage() {
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
-          // Only allow closing if explicitly set to false (from form success or X button)
           if (!open) {
             setIsDialogOpen(false);
           }
@@ -159,7 +155,7 @@ export default function MyPropertyPage() {
             <AddPropertyForm
               onSuccess={() => {
                 setIsDialogOpen(false);
-                fetchProperties(currentPage); // Refresh the properties list
+                fetchProperties(currentPage);
               }}
             />
           </DialogContent>
@@ -225,3 +221,5 @@ export default function MyPropertyPage() {
     </AgenciesSidebar>
   );
 }
+
+

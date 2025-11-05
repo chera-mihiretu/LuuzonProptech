@@ -168,6 +168,7 @@ export async function createAdminForTheApp(userId: string, name : string, email 
        
         const adminUser : UserModel = {
             user_id: userId,
+            agency_owner_id: userId,
             name: name, 
             role: UserRoles.ADMIN,
             email: email,

@@ -1,25 +1,11 @@
 "use client";
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { zodResolver } from "@hookform/resolvers/zod"
-import {  useForm } from "react-hook-form"
-import {  z } from "zod";
-import {  tenantRegistrationFormSchema } from "@/app/zod_validation/auth_validation"; 
+
 import {
-  Field,
   FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { useRouter } from "next/navigation";
+
 import { useState } from "react";
-import { registerUserEmail } from "@/app/api/auth/register/register";
-import { toast } from "sonner";
-import { authClient } from "@/lib/auth-client";
-import GoogleIcon from "@/data/icons";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AgentForm } from "@/components/register/agent-form";
 import { TenantForm } from "@/components/register/tenant-form";

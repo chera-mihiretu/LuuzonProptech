@@ -25,13 +25,19 @@ const  MY_ROUTES = {
         teams: '/agency/teams',
         settings: '/agency/settings',
         myproperty: '/agency/myproperty',
+        mypropertyRented: '/agency/myproperty/rented',
         propertyDetail: (id: string) => `/agency/myproperty/${id}`
     },
     admin: {
         current: '/admin', 
         dashboard: '/admin/dashboard',
-        settings: '/admin/settings'
+        settings: '/admin/settings',
+        agents: '/admin/agents',
+        tenants: '/admin/tenants'
     }
 };
+ 
+
+
 
 export default MY_ROUTES;

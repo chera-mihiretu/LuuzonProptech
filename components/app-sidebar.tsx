@@ -27,8 +27,7 @@ import { useRouter } from "next/navigation";
 import { getCurrentUser } from "@/app/api/auth/get-user/get-current-user"
 import { User } from "better-auth"
 import MY_ROUTES from "@/data/routes"
-import { title } from "process"
-import { ur } from "zod/v4/locales"
+
 // This is sample data.
 const agentData = {
   navMain: [
@@ -39,8 +38,8 @@ const agentData = {
       isActive: true,
       items: [
         {
-          title: "Home",
-          url: "#",
+          title: "Dashboard",
+          url: MY_ROUTES.agencies.dashboard,
         },
         {
           title: "Applications",
@@ -183,11 +182,11 @@ const adminData = {
       items: [
         {
           title: "Agents",
-          url: "#",
+          url: MY_ROUTES.admin.agents,
         },
         {
           title: "Tenants",
-          url: "#",
+          url: MY_ROUTES.admin.tenants,
         },
       ],
       
@@ -231,6 +230,7 @@ const adminData = {
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
   const [user, setUser] = useState<User|null>(null);
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const fetchUser = async () => {
       const user = await getCurrentUser();
@@ -242,6 +242,12 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
     };
     fetchUser();
   }, [router]);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) {
+    return null;
+  }
   
   return (
     <Sidebar collapsible="icon" {...props}>

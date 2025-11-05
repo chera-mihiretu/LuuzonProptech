@@ -1,23 +1,24 @@
 import { JWT_SECRET_KEY } from '@/app/config/envs';
-import { sign, JwtPayload, SignOptions } from 'jsonwebtoken';
+import { sign, JwtPayload, SignOptions, verify } from 'jsonwebtoken';
 
 export interface InvitationTokenPayload extends JwtPayload {
   user_id: string; 
+  email?: string;
   sub?: 'employee_invite';
   exp?: number
 }
 
-export function generateInvitationToken(userID: string): string {
+export function generateInvitationToken(userID: string, email: string): string {
     
     const payload: InvitationTokenPayload = {
         user_id: userID, 
+        email: email,
         sub: 'employee_invite', 
-        exp: Date.now() + (48 * 60 * 60 * 1000) // 48 hours
     };
 
     // Signing options
     const options: SignOptions = {
-        expiresIn: '48h', 
+        expiresIn: '24h', 
         algorithm: 'HS256' 
     };
 
@@ -31,3 +32,15 @@ export function generateInvitationToken(userID: string): string {
 
     
 }
+
+// can you write a function to validate the invitation token
+export function validateInvitationToken(token: string): InvitationTokenPayload {
+    try {
+        const payload = verify(token, JWT_SECRET_KEY);
+        return payload as InvitationTokenPayload;
+    } catch (error) {
+        throw new Error("Invalid or expired invitation token");
+    }
+}
+
+
