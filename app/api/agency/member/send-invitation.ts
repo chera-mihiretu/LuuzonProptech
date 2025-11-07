@@ -167,13 +167,26 @@ export async function getAgencyEmployees() {
         const user = await userCollection.findOne<UserModel>({user_id: session.user.id});
 
         const employees = await userCollection.find<UserModel>({
-            $or: [
-                {agency_owner_id: session.user.id},
-                {user_id: user?.agency_owner_id}
+            $and : [
+                {
+                    $or: [
+                        {agency_owner_id: session.user.id},
+                        {user_id: user?.agency_owner_id }
+                    ] 
+                }, 
+                { 
+                    user_id: 
+                    {$ne: session.user.id} 
+                }
+                    
+                
             ]
+
+            
            
 
         }).toArray();
+        console.log(session.user.id, employees);
 
         // Serialize MongoDB objects to plain objects
         const serializedEmployees = employees.map(serializeUser);
