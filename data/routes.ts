@@ -16,15 +16,19 @@ const  MY_ROUTES = {
     tenants : {
         current: '/tenant', 
         dashboard: '/tenant/dashboard',
-        settings: '/tenant/settings'
+        settings: '/tenant/settings',
+        dossier: '/tenant/dossier',
+        propertyDetail: (id: string) => `/tenant/properties/${id}`
     },
 
     agencies : {
+        applications: '/agency/applications',
         current: '/agency',
         dashboard: '/agency/dashboard',
         teams: '/agency/teams',
         settings: '/agency/settings',
         myproperty: '/agency/myproperty',
+
         mypropertyRented: '/agency/myproperty/rented',
         propertyDetail: (id: string) => `/agency/myproperty/${id}`
     },

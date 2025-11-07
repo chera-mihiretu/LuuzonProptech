@@ -26,11 +26,7 @@ function getFileExtension(filename: string): string {
   return filename.split('.').pop() || '';
 }
 
-/**
- * Uploads a file to Supabase storage bucket under /properties folder
- * @param file - The file to upload
- * @returns The public URL of the uploaded file
- */
+
 export async function uploadToSupabase(file: File): Promise<string> {
     console.log("supabaseBucket", supabaseBucket);
   try {
@@ -68,11 +64,7 @@ export async function uploadToSupabase(file: File): Promise<string> {
   }
 }
 
-/**
- * Uploads multiple files to Supabase storage
- * @param files - Array of files to upload
- * @returns Array of public URLs for the uploaded files
- */
+
 export async function uploadMultipleToSupabase(files: File[]): Promise<string[]> {
   try {
     const uploadPromises = files.map(file => uploadToSupabase(file));
@@ -85,11 +77,87 @@ export async function uploadMultipleToSupabase(files: File[]): Promise<string[]>
 }
 
 
-/**
- * Deletes multiple files from Supabase storage (client-side)
- * @param urls - Array of public URLs to delete
- * @returns Number of successfully deleted files
- */
+
+export async function uploadToSupabaseFolder(file: File, folder: string): Promise<string> {
+  try {
+    // Generate unique identifier
+    const uniqueId = generateUniqueId();
+    const fileExtension = getFileExtension(file.name);
+    const fileName = `${uniqueId}.${fileExtension}`;
+    const filePath = `${folder}/${fileName}`;
+
+    // Upload to Supabase storage
+    const { data, error } = await supabaseClient.storage
+      .from(supabaseBucket)
+      .upload(filePath, file, {
+        contentType: file.type,
+        upsert: false
+      });
+
+    if (error) {
+      throw new Error(`Failed to upload file: ${error.message}`);
+    }
+
+    // Get public URL
+    const { data: urlData } = supabaseClient.storage
+      .from(supabaseBucket)
+      .getPublicUrl(filePath);
+
+    if (!urlData?.publicUrl) {
+      throw new Error('Failed to get public URL for uploaded file');
+    }
+
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Error uploading to Supabase:', error);
+    throw error;
+  }
+}
+
+
+export async function uploadAvatar(file: File): Promise<string> {
+  return uploadToSupabaseFolder(file, 'avatars');
+}
+
+export async function uploadDocument(file: File): Promise<string> {
+  return uploadToSupabaseFolder(file, 'documents');
+}
+
+
+export async function uploadMultipleDocuments(files: File[]): Promise<string[]> {
+  try {
+    const uploadPromises = files.map(file => uploadDocument(file));
+    const urls = await Promise.all(uploadPromises);
+    return urls;
+  } catch (error) {
+    console.error('Error uploading multiple documents to Supabase:', error);
+    throw error;
+  }
+}
+
+
+export async function clientDeleteFromSupabase(url: string, folder: string): Promise<boolean> {
+  try {
+    const fileName = url.split('/').pop() || '';
+    const filePath = `${folder}/${fileName}`;
+
+    const { error } = await supabaseClient.storage
+      .from(supabaseBucket)
+      .remove([filePath]);
+
+    if (error) {
+      console.error('Error deleting file from Supabase:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting file from Supabase:', error);
+    return false;
+  }
+}
+
+
 export async function clientDeleteMultipleFromSupabase(urls: string[]): Promise<number> {
   try {
     if (urls.length === 0) {

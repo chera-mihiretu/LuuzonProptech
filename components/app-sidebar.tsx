@@ -43,7 +43,7 @@ const agentData = {
         },
         {
           title: "Applications",
-          url: "#",
+          url: MY_ROUTES.agencies.applications,
         },
         {
           title: "My Properties",
@@ -113,7 +113,7 @@ const tenantData = {
       items: [
         {
           title: "Home",
-          url: "#",
+          url: MY_ROUTES.tenants.dashboard,
         },
         {
           title: "My Applications",
@@ -121,7 +121,7 @@ const tenantData = {
         },
         {
           title: "My Dossier",
-          url: "#",
+          url: MY_ROUTES.tenants.dossier,
         },
       ],
     },
