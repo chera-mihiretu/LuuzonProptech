@@ -5,8 +5,6 @@ import { tenantRegistrationFormSchema } from "@/app/zod_validation/auth_validati
 import { userCollection } from "@/db/collections";
 import { UserModel } from "@/data/models/user.model";
 import { UserRoles } from "@/data/constants";
-import { role } from "better-auth/plugins";
-import { success } from "zod";
 import { ObjectId } from "mongodb";
 
 export async function registerUserEmail(email: string, password: string, name: string)  {

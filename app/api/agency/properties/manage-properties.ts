@@ -8,7 +8,6 @@ import { agencyPropertiesCollection, userCollection } from "@/db/collections";
 import { UserModel } from "@/data/models/user.model";
 import { ObjectId } from "mongodb";
 import { deleteMultipleFromSupabase } from "@/lib/supabase";
-import { uploadMultipleToSupabase } from "@/lib/supabase";
 
 
 export async function addProperty(propertyData: PropertyModel) {
