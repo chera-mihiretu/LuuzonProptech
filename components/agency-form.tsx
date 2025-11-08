@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { saveUserAsAgency, saveUserAsTenant } from "@/app/api/auth/complete-profile/complete-profile";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import MY_ROUTES from "@/data/routes";
 
 interface SetLoading {
     isLoading : boolean
@@ -49,9 +50,9 @@ export function AgencyForm(loading : SetLoading) {
     );
     console.log(success, message)
     if (success) {
-        console.log('Why is router not working ')
+        
         toast.success(message)
-        router.push('/redirecting')
+        router.push(MY_ROUTES.redirect)
     } else {    
         toast.error(message);
     }

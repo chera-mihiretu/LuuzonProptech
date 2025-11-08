@@ -10,6 +10,13 @@ interface VerificationData {
   otp?: string;
 }
 
+interface InvitationData {
+  agencyManager: string, 
+  agencyName: string, 
+  email: string, 
+  url: string 
+}
+
 // TODO : fix the name of the app and all constant values 
 
 export async function sendMailLink({ email, name, url }: VerificationData) {
@@ -176,6 +183,64 @@ const mailOptions = {
     </html>
   `, // html body with the OTP code
 };
+
+  // 3. Send the email
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Verification Email sent: %s', info.messageId);
+    
+  } catch (error) {
+    console.error('Error sending verification email:', error);
+    throw new Error('Failed to send verification email.');
+  }
+}
+
+
+
+
+
+export async function sendInvitationMail({ email, url, agencyManager, agencyName }: InvitationData) {
+  // 1. Create a Nodemailer transporter using your environment variables
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: parseInt(process.env.SMTP_PORT || '587') === 465, // Use true for 465, false for other ports
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const senderEmail = SENDER_EMAIL;
+
+  if (!senderEmail) {
+    throw new Error('FROM_EMAIL environment variable is not set.');
+  }
+
+  // 2. Define the email content
+  const mailOptions = {
+    from: `"${agencyName}" <${senderEmail}>`, // sender address
+    to: email, // list of receivers (the user's email)
+    subject: `Invitation to Join ${agencyName}`, // Subject line
+    text: `Hello,\n\nYou have been invited to join ${agencyName} by ${agencyManager}. Please click the link below to accept the invitation:\n\n${url}\n\nIf you have any questions, feel free to reach out to us.\n\nBest regards,\n${agencyName}`, // plain text body
+    html: `
+      <html>
+      <body style="font-family: sans-serif; line-height: 1.6; color: #333;">
+          <h1 style="color: #4CAF50;">You're Invited to Join ${agencyName}!</h1>
+          <p>Hello,</p>
+          <p>You have been invited to join <strong>${agencyName}</strong> by ${agencyManager}. Click the link below to accept the invitation and become part of our team:</p>
+          <p style="margin: 20px 0;">
+              <a href="${url}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+                  Accept Invitation
+              </a>
+          </p>
+          <p>If you have any questions, feel free to reach out to us.</p>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+          <p style="font-size: 0.8em; color: #999;">If you didn't expect this invitation, you can safely ignore this email.</p>
+      </body>
+      </html>
+    `, // html body with the invitation URL
+  };
 
   // 3. Send the email
   try {

@@ -1,7 +1,6 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { success } from "zod";
 
 export async function login(email: string, password: string) {
     try{

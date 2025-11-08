@@ -1,5 +1,5 @@
+'use client';
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import {
   Field,
   FieldDescription,
@@ -27,10 +27,9 @@ export function VerificationForm({ className, ...props }: React.ComponentProps<"
           </div>
 
           <FieldDescription className="text-center">
-            Didn&apos;t receive the code? <a href="#">Resend</a>
+            Didn&apos;t receive the code? <a href="#" onClick={() => toast.error('Not Implemented')}>Resend</a>
             {
               // TODO : Implement the resend email 
-              toast.error("Not implemented yet")
             }
           </FieldDescription>
         </FieldGroup>
