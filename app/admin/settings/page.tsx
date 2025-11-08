@@ -1,5 +1,5 @@
 'use client';
-import { AdminSidebar, AgentSidebar } from "@/components/app-sidebar"
+import { AdminSidebar } from "@/components/app-sidebar"
 
 import { Separator } from "@/components/ui/separator"
 import {

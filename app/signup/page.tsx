@@ -1,16 +1,20 @@
 "use client";
 
 import { GalleryVerticalEnd } from "lucide-react"
+import { Suspense } from "react"
 
 import { SignupForm } from "@/components/signup-form"
 import { useSearchParams } from "next/navigation";
 import InvitationForm from "@/components/invitation-form";
 
-export default function SignupPage() {
+function SignupContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
+  return token ? <InvitationForm token={token} /> : <SignupForm />;
+}
 
+export default function SignupPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -24,7 +28,9 @@ export default function SignupPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            { token ? <InvitationForm token={token} /> : <SignupForm />}
+            <Suspense fallback={<div>Loading...</div>}>
+              <SignupContent />
+            </Suspense>
           </div>
         </div>
       </div>

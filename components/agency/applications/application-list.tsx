@@ -115,7 +115,7 @@ export function ApplicationList({
             {applications.map((application) => (
               <ApplicationRow
                 key={application.id}
-                application={application}
+                application={application as any}
                 onViewDossier={onViewDossier}
               />
             ))}

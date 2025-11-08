@@ -1,17 +1,13 @@
 'use server';
 import { invitationsCollection, userCollection } from "@/db/collections"
 import { getMeSession, validateAuthorization } from "../../authorization/role-validation"
-import { auth } from "@/lib/auth"
 import MY_ROUTES from "@/data/routes"
-import { redirect } from "next/navigation"
 import { UserRoles } from "@/data/constants"
 import { generateInvitationToken } from "@/lib/jwt_decryption"
 import { UserModel } from "@/data/models/user.model"
 import { BASE_URL } from "@/app/config/envs"
 import { sendInvitationMail } from "@/services/email/nodemailer"
-import { headers } from "next/headers";
 import { InvitationModel } from "@/data/models/invitation.model";
-import { ObjectId } from "mongodb";
 
 // Helper function to serialize MongoDB objects to plain objects
 function serializeInvitation(invitation: any): any {
